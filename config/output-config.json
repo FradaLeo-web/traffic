@@ -1,0 +1,88 @@
+{
+  "outputPath": "../outputs/",
+  "dateFormat": "YYYY-MM-DD",
+  "defaultFormat": "md",
+  "subfolderRule": "by_date",
+  "namingConvention": "{type}_{date}_{number}.{ext}",
+  "autoIncrement": true,
+  "fileTypes": {
+    "case-report": {
+      "agent": "case-manager",
+      "description": "案件分析报告",
+      "examples": [
+        "案件信息梳理",
+        "办案节点时间表",
+        "材料索要话术",
+        "案件电子台账"
+      ]
+    },
+    "legal-doc": {
+      "agent": "document-writer",
+      "description": "法律文书",
+      "examples": [
+        "起诉状",
+        "答辩状",
+        "代理词",
+        "上诉状",
+        "申请书"
+      ]
+    },
+    "evidence": {
+      "agent": "evidence-analyzer",
+      "description": "证据分析",
+      "examples": [
+        "证据三性审查",
+        "证据目录清单",
+        "质证意见",
+        "证据链分析"
+      ]
+    },
+    "research": {
+      "agent": "legal-researcher",
+      "description": "法律检索",
+      "examples": [
+        "法条检索",
+        "类案检索",
+        "裁判规则"
+      ]
+    },
+    "trial": {
+      "agent": "trial-assistant",
+      "description": "庭审策略",
+      "examples": [
+        "庭审话术",
+        "发问提纲",
+        "应答策略"
+      ]
+    },
+    "content-img": {
+      "agent": "content-writer",
+      "description": "图文内容",
+      "examples": [
+        "小红书图文",
+        "封面文案",
+        "话题标签"
+      ]
+    },
+    "content-video": {
+      "agent": "content-writer",
+      "description": "视频口播",
+      "examples": [
+        "短视频口播文稿",
+        "视频脚本",
+        "BGM建议"
+      ]
+    }
+  },
+  "supportedFormats": [
+    "md",
+    "txt",
+    "docx"
+  ],
+  "encoding": "UTF-8",
+  "autoCreateSubfolder": true,
+  "backupEnabled": false,
+  "backupPath": "../outputs/backup/",
+  "maxFileSizeMB": 10,
+  "compressionEnabled": false
+}
