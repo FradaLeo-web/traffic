@@ -1,7 +1,7 @@
 {
   "name": "律师办案智能助手",
   "description": "专为律师设计的办案全流程智能助手，整合案件管理、证据分析、法律文书、法律检索、庭审策略、内容创作、判决预测等专业能力",
-  "version": "1.1.0",
+  "version": "1.3.0",
   "skills": {
     "workflow": {
       "description": "通用办案能力，覆盖律师日常工作的全流程",
@@ -100,6 +100,12 @@
           "path": "professional/civil-procedure/SKILL.md",
           "keywords": ["民事诉讼", "管辖", "立案", "举证", "执行"],
           "description": "管辖法院、立案材料、举证责任、庭审程序、执行申请"
+        },
+        {
+          "name": "刑事辩护",
+          "path": "professional/criminal-defense/SKILL.md",
+          "keywords": ["刑事辩护", "取保候审", "量刑情节", "刑事会见", "辩护策略", "刑事和解"],
+          "description": "刑事案件会见策略、取保候审申请、证据分析、量刑评估、庭审辩护、刑事和解"
         }
       ]
     },
