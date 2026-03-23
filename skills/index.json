@@ -59,6 +59,12 @@
           "path": "workflow/contract-reviewer/SKILL.md",
           "keywords": ["合同审查", "合同风险", "条款审查", "法律意见", "合同修改"],
           "description": "合同条款审查、风险识别、修改建议"
+        },
+        {
+          "name": "多引擎搜索助手",
+          "path": "workflow/multi-search-engine/SKILL.md",
+          "keywords": ["搜索", "多引擎", "百度", "Google", "Bing", "法律检索", "网页抓取"],
+          "description": "集成17个国内外搜索引擎，支持高级搜索语法、时间筛选、隐私搜索"
         }
       ]
     },
