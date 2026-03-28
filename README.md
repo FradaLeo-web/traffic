@@ -40,7 +40,7 @@ lawyer-assistant/
 │       └── judgment-prediction/      # 判决预测与分析
 ├── knowledge-base/                   # 法律知识库
 │   ├── laws/                         # 法律法规（14）
-│   ├── cases/                        # 典型案例（2689）
+│   ├── cases/                        # 典型案例（3060）
 │   ├── interpretations/              # 司法解释（72）
 │   ├── templates/                    # 文书模板（8）
 │   └── standards/                    # 计算标准（2）
