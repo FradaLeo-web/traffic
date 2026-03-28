@@ -1,7 +1,7 @@
 {
   "name": "律师办案智能助手",
   "description": "专为律师设计的办案全流程智能助手，整合案件管理、证据分析、法律文书、法律检索、庭审策略、内容创作、判决预测等专业能力",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "skills": {
     "workflow": {
       "description": "通用办案能力，覆盖律师日常工作的全流程",
@@ -72,40 +72,40 @@
       "description": "专业领域技能，按案件类型划分",
       "items": [
         {
-          "name": "劳动争议",
-          "path": "professional/labor-dispute/SKILL.md",
-          "keywords": ["劳动争议", "工伤", "劳动合同", "经济补偿", "赔偿金"],
-          "description": "劳动关系认定、工伤赔偿、工资报酬、劳动仲裁代理"
-        },
-        {
-          "name": "交通事故",
-          "path": "professional/traffic-accident/SKILL.md",
-          "keywords": ["交通事故", "责任认定", "伤残鉴定", "保险理赔", "赔偿计算"],
-          "description": "责任认定、伤残鉴定、保险理赔、刑事责任辩护"
-        },
-        {
-          "name": "合同纠纷",
-          "path": "professional/contract-dispute/SKILL.md",
-          "keywords": ["合同纠纷", "合同效力", "违约责任", "违约金", "解除合同"],
-          "description": "合同效力审查、违约认定、损失计算、合同解除"
-        },
-        {
-          "name": "侵权纠纷",
-          "path": "professional/tort-dispute/SKILL.md",
-          "keywords": ["侵权", "人身损害", "精神损害", "赔偿", "责任认定"],
-          "description": "侵权责任认定、人身/财产/精神损害赔偿"
-        },
-        {
-          "name": "民事诉讼",
-          "path": "professional/civil-procedure/SKILL.md",
-          "keywords": ["民事诉讼", "管辖", "立案", "举证", "执行"],
-          "description": "管辖法院、立案材料、举证责任、庭审程序、执行申请"
-        },
-        {
           "name": "刑事辩护",
           "path": "professional/criminal-defense/SKILL.md",
           "keywords": ["刑事辩护", "取保候审", "量刑情节", "刑事会见", "辩护策略", "刑事和解"],
           "description": "刑事案件会见策略、取保候审申请、证据分析、量刑评估、庭审辩护、刑事和解"
+        },
+        {
+          "name": "量刑计算器",
+          "path": "professional/sentencing-calculator/SKILL.md",
+          "keywords": ["量刑计算", "量刑预测", "基准刑", "宣告刑", "从轻", "从重", "缓刑"],
+          "description": "基于量刑指导意见的自动化计算，支持常见犯罪量刑预测"
+        },
+        {
+          "name": "诈骗罪辩护",
+          "path": "professional/fraud-defense/SKILL.md",
+          "keywords": ["诈骗罪", "诈骗辩护", "电信诈骗", "合同诈骗", "量刑辩护", "取保候审", "无罪辩护"],
+          "description": "诈骗罪专项辩护策略、控告要点、量刑辩护、程序辩护"
+        },
+        {
+          "name": "盗窃罪辩护",
+          "path": "professional/theft-defense/SKILL.md",
+          "keywords": ["盗窃罪", "盗窃辩护", "扒窃", "入室盗窃", "数额认定", "量刑辩护", "取保候审"],
+          "description": "盗窃罪专项辩护策略、罪与非罪、金额辩护、程序辩护"
+        },
+        {
+          "name": "危险驾驶罪辩护",
+          "path": "professional/dangerous-driving-defense/SKILL.md",
+          "keywords": ["危险驾驶", "醉驾", "醉驾辩护", "血液酒精含量", "缓刑适用", "取保候审", "不起诉"],
+          "description": "醉驾/飙车辩护、血检异议、缓刑适用、取保候审"
+        },
+        {
+          "name": "刑事合规顾问",
+          "path": "professional/criminal-compliance/SKILL.md",
+          "keywords": ["刑事合规", "企业合规", "合规不起诉", "刑事风险", "企业犯罪预防", "合规整改"],
+          "description": "企业刑事风险防范、刑事合规整改、合规不起诉"
         }
       ]
     },
