@@ -41,3 +41,14 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Node.js
+node_modules/
+package-lock.json
+package.json
+
+# Temporary files
+nul
+
+# Generated scripts
+generate_legal_opinion.py
