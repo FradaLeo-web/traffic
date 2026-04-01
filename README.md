@@ -39,11 +39,11 @@ lawyer-assistant/
 │   └── intelligence/                 # 智能分析能力
 │       └── judgment-prediction/      # 判决预测与分析
 ├── knowledge-base/                   # 法律知识库
-│   ├── laws/                         # 法律法规（14）
-│   ├── cases/                        # 典型案例（3060）
-│   ├── interpretations/              # 司法解释（72）
-│   ├── templates/                    # 文书模板（8）
-│   └── standards/                    # 计算标准（2）
+│   ├── laws/                         # 法律法规（34）
+│   ├── cases/                        # 典型案例（3194）
+│   ├── interpretations/              # 司法解释（149）
+│   ├── templates/                    # 文书模板（9）
+│   └── standards/                    # 计算标准（3）
 ├── tests/                            # 测试用例
 └── docs/                             # 项目文档
 ```
