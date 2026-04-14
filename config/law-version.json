@@ -1,0 +1,72 @@
+{
+  "version": "1.0.0",
+  "update_date": "2026-04-14",
+  "laws": [
+    {
+      "name": "中华人民共和国民事诉讼法",
+      "current_version": "2024修正",
+      "effective_date": "2024-01-01",
+      "previous_version": "2021修正",
+      "deprecated_date": "2023-12-31",
+      "description": "2023年12月29日全国人大常委会修改，2024年1月1日起施行"
+    },
+    {
+      "name": "中华人民共和国刑法",
+      "current_version": "刑法修正案（十二）",
+      "effective_date": "2024-03-01",
+      "previous_version": "刑法修正案（十一）",
+      "deprecated_date": "2024-02-29",
+      "description": "2023年12月29日全国人大常委会通过，2024年3月1日起施行"
+    },
+    {
+      "name": "中华人民共和国劳动合同法",
+      "current_version": "2012修正",
+      "effective_date": "2013-07-01",
+      "previous_version": "2007",
+      "deprecated_date": "2013-06-30",
+      "description": "2012年12月28日全国人大常委会修改，2013年7月1日起施行"
+    },
+    {
+      "name": "中华人民共和国工伤保险条例",
+      "current_version": "2010修订",
+      "effective_date": "2011-01-01",
+      "previous_version": "2004",
+      "deprecated_date": "2010-12-31",
+      "description": "2010年12月20日国务院修订，2011年1月1日起施行"
+    },
+    {
+      "name": "最高人民法院关于审理民间借贷案件适用法律若干问题的规定",
+      "current_version": "2020第二次修正",
+      "effective_date": "2021-01-01",
+      "previous_version": "2020第一次修正",
+      "deprecated_date": "2020-12-31",
+      "description": "2020年12月23日最高人民法院修改，2021年1月1日起施行"
+    },
+    {
+      "name": "最高人民法院关于审理人身损害赔偿案件适用法律若干问题的解释",
+      "current_version": "2022修正",
+      "effective_date": "2022-05-01",
+      "previous_version": "2020修正",
+      "deprecated_date": "2022-04-30",
+      "description": "2022年2月15日最高人民法院修改，2022年5月1日起施行"
+    },
+    {
+      "name": "最高人民法院关于常见犯罪的量刑指导意见（试行）",
+      "current_version": "2023",
+      "effective_date": "2023-07-01",
+      "previous_version": "2021",
+      "deprecated_date": "2023-06-30",
+      "description": "2023年6月最高人民法院修订，2023年7月1日起施行"
+    },
+    {
+      "name": "诉讼费用交纳办法",
+      "current_version": "2006",
+      "effective_date": "2007-04-01",
+      "previous_version": "1989",
+      "deprecated_date": "2007-03-31",
+      "description": "2006年12月19日国务院发布，2007年4月1日起施行"
+    }
+  ],
+  "check_cycle": "quarterly",
+  "update_notice": "本规则库每季度更新一次，如遇重要法律修订将即时更新，使用时请注意规则版本是否为最新版本。"
+}

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import json; f = open\\('skills/index.json', 'r', encoding='utf-8'\\); data = json.load\\(f\\); print\\(f'✅ 配置验证成功：'\\); print\\(f'通用技能数量：{len\\(data[\\\\\"skills\\\\\"][\\\\\"workflow\\\\\"][\\\\\"items\\\\\"]\\)}'\\); print\\(f'专业技能数量：{len\\(data[\\\\\"skills\\\\\"][\\\\\"professional\\\\\"][\\\\\"items\\\\\"]\\)}'\\); print\\(f'智能分析技能数量：{len\\(data[\\\\\"skills\\\\\"][\\\\\"intelligence\\\\\"][\\\\\"items\\\\\"]\\)}'\\); print\\(f'总技能数量：{len\\(data[\\\\\"skills\\\\\"][\\\\\"workflow\\\\\"][\\\\\"items\\\\\"]\\) + len\\(data[\\\\\"skills\\\\\"][\\\\\"professional\\\\\"][\\\\\"items\\\\\"]\\) + len\\(data[\\\\\"skills\\\\\"][\\\\\"intelligence\\\\\"][\\\\\"items\\\\\"]\\)}'\\)\")",
+      "Read(//c/Users/Administrator/.openclaw/skills/**)",
+      "Read(//c/Users/Administrator/.opencode/**)",
+      "Read(//c/Users/Administrator/.claw/**)"
+    ]
+  }
+}

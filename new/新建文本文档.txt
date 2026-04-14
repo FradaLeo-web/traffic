@@ -1,0 +1,15 @@
+[人类律师输入案件材料]
+↓
+[Scheduler] 分解任务 → [DocAnalyzer] 解析材料提取要素
+→ [EvidenceAnalyzer] 梳理证据链
+→ [Researcher] 检索类案与法条
+→ [Strategist] 确定诉讼策略与请求权基础
+→ [Writer] 生成起诉状初稿
+→ [Reviewer] 审核并标注修改意见
+→ [Reporter] 生成案件简报
+↓
+[Controller] 汇总所有输出 → [人类律师] 审核定稿
+
+项目版本从1.0.0开始
+最后更新: 2026-04-10
+适用工具: Claude Code / OpenCode /openclaw

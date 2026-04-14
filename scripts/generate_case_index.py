@@ -8,20 +8,31 @@
 import os
 import re
 import shutil
+import argparse
 from pathlib import Path
 from datetime import datetime
 
-# 配置
-SOURCE_DIR = r"D:\AIlaw\lawyer-assistant\1"
-TARGET_BASE = r"D:\AIlaw\lawyer-assistant\knowledge-base\cases\刑事案例"
-
 # 分类规则
 CATEGORIES = {
+    # 刑事类
     "职务侵占": ["职务侵占"],
     "非法集资": ["非法集资", "非法吸收", "集资诈骗"],
     "挪用资金": ["挪用资金", "挪用公款"],
     "贪污受贿": ["贪污", "受贿", "行贿"],
-    "其他刑事": ["洗钱", "掩饰隐瞒", "操纵", "内幕交易", "盗窃", "诈骗", "虚假破产", "背信", "黑社会性质", "寻衅滋事", "环境污染", "假冒注册商标"]
+    "诈骗罪": ["诈骗", "电信诈骗", "合同诈骗"],
+    "盗窃罪": ["盗窃", "扒窃", "入室盗窃"],
+    "危险驾驶": ["危险驾驶", "醉驾", "飙车"],
+    "故意伤害": ["故意伤害", "故意杀人", "过失致人"],
+    "其他刑事": ["洗钱", "掩饰隐瞒", "操纵", "内幕交易", "虚假破产", "背信", "黑社会性质", "寻衅滋事", "环境污染", "假冒注册商标"],
+    # 民事类
+    "交通事故": ["交通事故", "机动车事故", "交通肇事"],
+    "劳动争议": ["劳动争议", "工伤", "劳动合同", "经济补偿"],
+    "婚姻家庭": ["离婚", "抚养权", "继承", "财产分割", "赡养"],
+    "民间借贷": ["民间借贷", "借款", "借条", "欠条", "利息"],
+    "合同纠纷": ["合同纠纷", "违约", "合同效力", "违约金"],
+    "侵权纠纷": ["侵权", "人身损害", "精神损害", "责任认定"],
+    # 行政类
+    "行政诉讼": ["行政诉讼", "行政复议", "行政处罚", "行政赔偿"]
 }
 
 def classify_case(filename):
@@ -74,8 +85,11 @@ def extract_case_info(filename):
     
     return info
 
-def generate_markdown_index(category, files_info):
+def generate_markdown_index(category, files_info, source_path, category_dir):
     """生成Markdown索引文件"""
+    # 计算源目录相对于索引目录的相对路径
+    rel_source_path = os.path.relpath(source_path, category_dir).replace('\\', '/')
+
     content = f"""# {category}案例索引
 
 > 本目录收录{category}相关案例，共计 {len(files_info)} 个文件
@@ -89,18 +103,18 @@ def generate_markdown_index(category, files_info):
 | 序号 | 案例名称 | 类型 | 来源 | 级别 |
 |------|----------|------|------|------|
 """
-    
+
     for idx, info in enumerate(files_info, 1):
-        content += f"| {idx} | {info['title']} | {info['case_type']} | {info['source']} | {info['level']} |\n"
-    
-    content += """
+        content += f"| {idx} | [{info['title']}]({rel_source_path}/{info['filename'].replace(' ', '%20')}) | {info['case_type']} | {info['source']} | {info['level']} |\n"
+
+    content += f"""
 ---
 
 ## 使用说明
 
 1. 本索引文件由系统自动生成
-2. 原始PDF文件位于：`D:\\AIlaw\\lawyer-assistant\\1`
-3. 如需查看案例详情，请查阅原始PDF文件
+2. 原始PDF文件位于：`{rel_source_path}`
+3. 如需查看案例详情，请点击案例名称链接打开PDF文件
 4. 案例按文件名关键词自动分类，可能存在分类偏差
 
 ---
@@ -191,13 +205,29 @@ def generate_markdown_index(category, files_info):
 
 def main():
     """主函数"""
+    parser = argparse.ArgumentParser(description='案例文件分类索引生成脚本')
+    parser.add_argument('--source', '-s', default='../1', help='PDF案例文件所在目录（默认：../1）')
+    parser.add_argument('--target', '-t', default='../knowledge-base/cases', help='索引文件输出目录（默认：../knowledge-base/cases）')
+    args = parser.parse_args()
+
     print("开始生成案例索引...")
-    
-    # 获取所有PDF文件
-    source_path = Path(SOURCE_DIR)
-    pdf_files = list(source_path.glob("*.pdf"))
-    
-    print(f"找到 {len(pdf_files)} 个PDF文件")
+
+    try:
+        # 获取所有PDF文件
+        source_path = Path(args.source).resolve()
+        target_base = Path(args.target).resolve()
+
+        if not source_path.exists():
+            print(f"❌ 错误：源目录不存在 - {source_path}")
+            return
+
+        pdf_files = list(source_path.glob("*.pdf"))
+
+        if not pdf_files:
+            print(f"⚠️  警告：源目录中没有找到PDF文件 - {source_path}")
+            return
+
+        print(f"找到 {len(pdf_files)} 个PDF文件")
     
     # 按分类存储文件信息
     categorized_files = {cat: [] for cat in CATEGORIES.keys()}
@@ -215,31 +245,36 @@ def main():
     for category, files_info in categorized_files.items():
         if not files_info:
             continue
-            
-        category_dir = os.path.join(TARGET_BASE, category)
+
+        category_dir = target_base / category
         os.makedirs(category_dir, exist_ok=True)
-        
+
         # 生成索引文件
-        index_content = generate_markdown_index(category, files_info)
-        index_path = os.path.join(category_dir, "index.md")
-        
+        index_content = generate_markdown_index(category, files_info, source_path, category_dir)
+        index_path = category_dir / "index.md"
+
         with open(index_path, "w", encoding="utf-8") as f:
             f.write(index_content)
-        
+
         print(f"✅ {category}: 生成索引文件，包含 {len(files_info)} 个案例")
-    
+
     # 生成总索引
-    generate_master_index(categorized_files)
-    
+    generate_master_index(categorized_files, target_base)
+
     print("\n索引生成完成！")
 
-def generate_master_index(categorized_files):
+    except Exception as e:
+        print(f"❌ 生成索引失败：{str(e)}")
+        import traceback
+        traceback.print_exc()
+
+def generate_master_index(categorized_files, target_base):
     """生成总索引文件"""
     total = sum(len(files) for files in categorized_files.values())
-    
-    content = f"""# 刑事案例库总索引
 
-> 本知识库收录刑事相关案例，共计 {total} 个文件
+    content = f"""# 法律案例库总索引
+
+> 本知识库收录刑事、民事、行政等各类法律案例，共计 {total} 个文件
 
 生成时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
@@ -250,42 +285,41 @@ def generate_master_index(categorized_files):
 | 分类 | 案例数量 | 索引文件 |
 |------|----------|----------|
 """
-    
+
     for category, files_info in categorized_files.items():
         if files_info:
             content += f"| {category} | {len(files_info)} | [查看索引](./{category}/index.md) |\n"
-    
+
     content += """
 ---
 
 ## 快速导航
 
 """
-    
-    for category in categorized_files.keys():
+
+    for category in sorted(categorized_files.keys()):
         content += f"- [{category}](./{category}/index.md)\n"
-    
+
     content += """
 ---
 
 ## 使用说明
 
 1. 本索引文件由系统自动生成
-2. 原始PDF文件位于：`D:\\AIlaw\\lawyer-assistant\\1`
-3. 案例按文件名关键词自动分类
-4. 如需查看案例详情，请查阅原始PDF文件
+2. 案例按文件名关键词自动分类
+3. 如需查看案例详情，请进入对应分类查看索引文件并点击链接打开PDF
 
 ---
 
 ## 更新日志
 
 """
-    content += f"- {datetime.now().strftime('%Y-%m-%d')}: 初始导入 {total} 个案例文件\n"
-    
-    index_path = os.path.join(TARGET_BASE, "README.md")
+    content += f"- {datetime.now().strftime('%Y-%m-%d')}: 导入 {total} 个案例文件，扩展支持民事、行政等多类案例\n"
+
+    index_path = target_base / "README.md"
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(content)
-    
+
     print(f"✅ 生成总索引文件: {index_path}")
 
 if __name__ == "__main__":

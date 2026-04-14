@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>山西省人身损害赔偿计算系统</title>
+    <!-- 引入轻量资源，提升兼容性 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 简化Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .form-focus {
+                @apply border-primary ring-2 ring-primary/20;
+            }
+            .btn-hover {
+                @apply transition-colors duration-200;
+            }
+        }
+    </style>
+    
+    <!-- 基础兼容样式 -->
+    <style>
+        /* 兼容旧浏览器的hidden样式 */
+        .hidden { display: none !important; }
+        /* 解决部分浏览器input默认样式问题 */
+        input[type="radio"] { vertical-align: middle; }
+        /* 表格滚动兼容 */
+        .table-scroll { overflow-x: auto; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+    <!-- 头部简化 -->
+    <header class="bg-white shadow-sm sticky top-0 z-30">
+        <div class="container mx-auto px-3 py-3">
+            <div class="flex items-center justify-center gap-2">
+                <i class="fa fa-balance-scale text-primary text-xl"></i>
+                <h1 class="text-lg font-bold text-gray-800">山西人身损害赔偿计算</h1>
+            </div>
+            <div class="text-xs text-gray-500 text-center mt-1">
+                参考规范：GA/T1193—2014 | 晋高法〔2020〕34号
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区精简 -->
+    <main class="container mx-auto px-3 py-4">
+        <div class="grid grid-cols-1 gap-4">
+            <!-- 输入表单 -->
+            <div class="bg-white rounded-lg p-4 shadow-md">
+                <h2 class="text-base font-semibold text-gray-800 mb-3 border-b pb-2 flex items-center">
+                    <i class="fa fa-pencil-square-o text-primary mr-2"></i>基础信息录入
+                </h2>
+                
+                <!-- 受害人信息 -->
+                <div class="mb-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                        <i class="fa fa-user-o text-primary mr-1 text-xs"></i>受害人基础信息
+                    </h3>
+                    <div class="grid grid-cols-1 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">姓名</label>
+                            <input type="text" id="victimName" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="请输入姓名">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">年龄（周岁）</label>
+                            <input type="number" id="victimAge" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="请输入年龄" min="0">
+                        </div>
+                        
+                        <!-- 伤残状态选择（核心优化） -->
+                        <div class="p-3 bg-gray-50 rounded-lg mb-2">
+                            <label class="block text-xs text-gray-600 mb-2">伤残情况设置</label>
+                            <div class="flex flex-col gap-2">
+                                <label class="inline-flex items-center p-2 bg-white rounded border border-gray-200 cursor-pointer btn-hover hover:border-primary">
+                                    <input type="radio" name="disabilityStatus" value="has" class="text-primary mr-2" checked>
+                                    <span class="text-sm">有伤残（可添加多个伤残等级）</span>
+                                </label>
+                                <label class="inline-flex items-center p-2 bg-white rounded border border-gray-200 cursor-pointer btn-hover hover:border-primary">
+                                    <input type="radio" name="disabilityStatus" value="none" class="text-primary mr-2">
+                                    <span class="text-sm">无伤残（仅计算基础项目）</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- 伤残等级输入区 -->
+                        <div id="disabilityLevelsWrapper">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-xs text-gray-600">伤残等级（可添加多个）</label>
+                                <button type="button" id="addDisabilityBtn" class="text-sm text-primary btn-hover hover:text-primary/80 flex items-center">
+                                    <i class="fa fa-plus-circle mr-1"></i> 添加
+                                </button>
+                            </div>
+                            <div id="disabilityLevelsContainer" class="mb-2">
+                                <div class="disability-level-item flex gap-2">
+                                    <select class="flex-1 h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus">
+                                        <option value="10">十级（10%）</option>
+                                        <option value="9">九级（20%）</option>
+                                        <option value="8">八级（30%）</option>
+                                        <option value="7">七级（40%）</option>
+                                        <option value="6">六级（50%）</option>
+                                        <option value="5">五级（60%）</option>
+                                        <option value="4">四级（70%）</option>
+                                        <option value="3">三级（80%）</option>
+                                        <option value="2">二级（90%）</option>
+                                        <option value="1">一级（100%）</option>
+                                    </select>
+                                    <button type="button" class="remove-disability-btn text-gray-400 btn-hover hover:text-red-500 p-3" disabled>
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">注：多个伤残等级按最高等级+附加指数计算</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 医疗信息（精简布局） -->
+                <div class="mb-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                        <i class="fa fa-hospital-o text-primary mr-1 text-xs"></i>医疗相关信息
+                    </h3>
+                    <div class="grid grid-cols-1 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">医疗费（元）</label>
+                            <input type="number" id="medicalFee" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="实际支出金额" min="0" step="0.01">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">住院天数</label>
+                            <input type="number" id="hospitalDays" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="请输入天数" min="0">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">后续治疗费（元）</label>
+                            <input type="number" id="followUpFee" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="预估金额" min="0" step="0.01">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">康复费（元）</label>
+                            <input type="number" id="rehabilitationFee" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="实际支出金额" min="0" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 误工/护理/营养（精简交互） -->
+                <div class="mb-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                        <i class="fa fa-heartbeat text-primary mr-1 text-xs"></i>误工/护理/营养
+                    </h3>
+                    <div class="grid grid-cols-1 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">误工期（天）</label>
+                            <input type="number" id="workLossDays" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="按GA/T1193评定" min="0">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">日收入（元）</label>
+                            <input type="number" id="dailyIncome" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" value="80" min="0" step="0.01">
+                        </div>
+                        
+                        <!-- 护理费类型 -->
+                        <div class="p-3 bg-gray-50 rounded-lg mb-2">
+                            <label class="block text-xs text-gray-600 mb-2">是否雇佣专业护理人员</label>
+                            <div class="flex flex-col gap-2">
+                                <label class="inline-flex items-center p-2 bg-white rounded border border-gray-200 cursor-pointer btn-hover hover:border-primary">
+                                    <input type="radio" name="nursingType" value="family" class="text-primary mr-2" checked>
+                                    <span class="text-sm">仅家庭成员护理（默认120元/天）</span>
+                                </label>
+                                <label class="inline-flex items-center p-2 bg-white rounded border border-gray-200 cursor-pointer btn-hover hover:border-primary">
+                                    <input type="radio" name="nursingType" value="professional" class="text-primary mr-2">
+                                    <span class="text-sm">有专业护理人员</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">家庭成员护理期（天）</label>
+                            <input type="number" id="familyNursingDays" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="按GA/T1193评定" min="0">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">家庭成员护理日费用（元）</label>
+                            <input type="number" id="familyNursingDailyIncome" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" value="120" min="0" step="0.01">
+                        </div>
+                        
+                        <!-- 专业护理字段（简化显示逻辑） -->
+                        <div id="professionalNursingFields" class="hidden">
+                            <div class="p-2 bg-blue-50 rounded-lg">
+                                <p class="text-xs text-primary mb-2">专业护理人员信息（二选一）</p>
+                                <div class="flex flex-col gap-2 mb-2">
+                                    <label class="inline-flex items-center p-2 bg-white rounded border border-gray-200 cursor-pointer btn-hover hover:border-primary">
+                                        <input type="radio" name="professionalCalcType" value="daily" class="text-primary mr-2" checked>
+                                        <span class="text-sm">按日计算（日费 × 天数）</span>
+                                    </label>
+                                    <label class="inline-flex items-center p-2 bg-white rounded border border-gray-200 cursor-pointer btn-hover hover:border-primary">
+                                        <input type="radio" name="professionalCalcType" value="total" class="text-primary mr-2">
+                                        <span class="text-sm">直接填写总费用</span>
+                                    </label>
+                                </div>
+                                
+                                <div id="professionalDailyFields" class="grid grid-cols-1 gap-3">
+                                    <div>
+                                        <label class="block text-xs text-gray-600 mb-1">专业护理期（天）</label>
+                                        <input type="number" id="professionalNursingDays" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="护理天数" min="0">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-gray-600 mb-1">专业护理日费用（元）</label>
+                                        <input type="number" id="professionalNursingDailyIncome" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="实际日费" min="0" step="0.01">
+                                    </div>
+                                </div>
+                                
+                                <div id="professionalTotalField" class="hidden">
+                                    <div>
+                                        <label class="block text-xs text-gray-600 mb-1">专业护理总费用（元）</label>
+                                        <input type="number" id="professionalNursingTotal" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="实际总金额" min="0" step="0.01">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">营养期（天）</label>
+                            <input type="number" id="nutritionDays" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="按GA/T1193评定" min="0">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">营养费标准（元/天）</label>
+                            <input type="number" id="nutritionStandard" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" value="50" min="30" max="100" step="1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 其他信息 -->
+                <div class="mb-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                        <i class="fa fa-list-alt text-primary mr-1 text-xs"></i>其他相关信息
+                    </h3>
+                    <div class="grid grid-cols-1 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">交通费（元）</label>
+                            <input type="number" id="trafficFee" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="实际支出金额" min="0" step="0.01">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">住宿费（元）</label>
+                            <input type="number" id="accommodationFee" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="实际支出金额" min="0" step="0.01">
+                        </div>
+                        
+                        <!-- 被扶养人信息（伤残时显示） -->
+                        <div id="dependentFields">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">被扶养人人数</label>
+                                <input type="number" id="dependentCount" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="如：1" min="0">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">被扶养人平均年限（年）</label>
+                                <input type="number" id="dependentYears" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="如：10" min="0" max="20">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">扶养人人数</label>
+                                <input type="number" id="supportorCount" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="如：2" min="1">
+                            </div>
+                        </div>
+                        
+                        <!-- 残疾辅助器具费（伤残时显示） -->
+                        <div id="disabilityDeviceField">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">残疾辅助器具费（元）</label>
+                                <input type="number" id="disabilityDeviceFee" class="w-full h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus" placeholder="实际支出金额" min="0" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 计算按钮（简化样式） -->
+                <button id="calculateBtn" class="w-full h-12 bg-primary text-white rounded-lg btn-hover hover:bg-primary/90 flex items-center justify-center gap-2 shadow">
+                    <i class="fa fa-calculator"></i>
+                    <span>计算赔偿金额</span>
+                </button>
+            </div>
+
+            <!-- 结果展示区（精简布局） -->
+            <div class="bg-white rounded-lg p-4 shadow-md">
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-3 gap-2">
+                    <h2 class="text-base font-semibold text-gray-800 border-b pb-2 flex items-center">
+                        <i class="fa fa-list-alt text-primary mr-2"></i>赔偿项目计算结果
+                    </h2>
+                    <div class="flex gap-2 flex-wrap">
+                        <button id="copyFullBtn" class="h-10 bg-gray-100 btn-hover hover:bg-gray-200 text-gray-700 py-2 px-4 rounded flex items-center gap-1">
+                            <i class="fa fa-copy"></i>
+                            <span>复制完整结果</span>
+                        </button>
+                        <button id="copySimpleBtn" class="h-10 bg-primary/10 btn-hover hover:bg-primary/20 text-primary py-2 px-4 rounded flex items-center gap-1">
+                            <i class="fa fa-copy"></i>
+                            <span>复制简洁版本</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 结果概览 -->
+                <div class="mb-3 bg-primary/5 rounded-lg p-3">
+                    <div class="flex flex-col gap-2">
+                        <div class="text-gray-700">
+                            <span class="text-sm">受害人：</span>
+                            <span id="resultVictimName" class="font-medium">未填写</span>
+                        </div>
+                        <div class="text-gray-700">
+                            <span class="text-sm">伤残情况：</span>
+                            <span id="resultDisabilityStatus" class="font-medium">有伤残</span>
+                        </div>
+                        <div class="text-gray-700" id="resultDisabilityLevelWrapper">
+                            <span class="text-sm">伤残等级：</span>
+                            <span id="resultDisabilityLevel" class="font-medium">十级</span>
+                        </div>
+                        <div class="text-gray-700" id="resultDisabilityRatioWrapper">
+                            <span class="text-sm">综合伤残系数：</span>
+                            <span id="resultDisabilityRatio" class="font-medium">10%</span>
+                        </div>
+                        <div class="pt-2 border-t border-primary/20">
+                            <span class="text-sm text-gray-700">总计赔偿金额：</span>
+                            <span id="totalAmount" class="text-xl font-bold text-primary">¥ 0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 结果表格（兼容滚动） -->
+                <div class="table-scroll rounded-lg border border-gray-200">
+                    <table class="w-full border-collapse min-w-[500px]">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="px-3 py-2 text-left text-sm font-medium text-gray-700 border-b">赔偿项目</th>
+                                <th class="px-3 py-2 text-left text-sm font-medium text-gray-700 border-b">计算依据</th>
+                                <th class="px-3 py-2 text-left text-sm font-medium text-gray-700 border-b">计算过程</th>
+                                <th class="px-3 py-2 text-right text-sm font-medium text-gray-700 border-b">结果（元）</th>
+                            </tr>
+                        </thead>
+                        <tbody id="compensationTable">
+                            <tr class="text-gray-600">
+                                <td colspan="4" class="px-4 py-6 text-center text-sm">请填写信息并点击「计算赔偿金额」</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 参考标准（精简文字） -->
+                <div class="mt-3 text-xs text-gray-500 bg-gray-50 p-3 rounded">
+                    <h4 class="font-medium text-gray-700 mb-1">2024年山西参考基数：</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>城镇居民人均可支配收入：<input type="number" id="incomeInput" value="44649" min="0" step="1" class="w-24 px-2 py-1 border border-gray-300 rounded text-xs">元/年</li>
+                        <li>城镇居民人均消费支出：<input type="number" id="expenseInput" value="27339" min="0" step="1" class="w-24 px-2 py-1 border border-gray-300 rounded text-xs">元/年</li>
+                        <li>住院伙食补助费：100元/天 | 护工参考：120元/天</li>
+                        <li>精神损害抚慰金：十级5000元，每级递增5000元</li>
+                        <li>丧葬费：49959.5元（2024年参考）</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚简化 -->
+    <footer class="bg-white border-t mt-4 py-3">
+        <div class="container mx-auto px-3 text-center text-xs text-gray-500">
+            <p>本系统仅为参考，最终金额以司法判决/调解为准</p>
+        </div>
+    </footer>
+
+    <script>
+        // 核心配置数据（精简常量定义）
+        const BASE = {
+            hospitalFood: 100,    // 住院伙食补助
+            nursing: 120,         // 护工参考
+            mentalBase: 5000,     // 精神损害基础
+            funeral: 49959.5        // 丧葬费
+        };
+
+        // 伤残系数映射
+        const DIS_RATIO = {1:1.0, 2:0.9, 3:0.8, 4:0.7, 5:0.6, 6:0.5, 7:0.4, 8:0.3, 9:0.2, 10:0.1};
+        
+        // 附加指数计算
+        const getAddRatio = level => {
+            const ratios = [0, 0, 0.10, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02];
+            return ratios[level] || 0;
+        };
+
+        // DOM元素缓存（精简选择器）
+        const el = {
+            disabilityRadios: document.querySelectorAll('input[name="disabilityStatus"]'),
+            disabilityWrapper: document.getElementById('disabilityLevelsWrapper'),
+            dependentFields: document.getElementById('dependentFields'),
+            disabilityDevice: document.getElementById('disabilityDeviceField'),
+            nursingRadios: document.querySelectorAll('input[name="nursingType"]'),
+            professionalFields: document.getElementById('professionalNursingFields'),
+            professionalCalc: document.querySelectorAll('input[name="professionalCalcType"]'),
+            professionalDaily: document.getElementById('professionalDailyFields'),
+            professionalTotal: document.getElementById('professionalTotalField'),
+            addDisability: document.getElementById('addDisabilityBtn'),
+            disabilityContainer: document.getElementById('disabilityLevelsContainer'),
+            calculateBtn: document.getElementById('calculateBtn'),
+            copyFull: document.getElementById('copyFullBtn'),
+            copySimple: document.getElementById('copySimpleBtn'),
+            resultName: document.getElementById('resultVictimName'),
+            resultDisStatus: document.getElementById('resultDisabilityStatus'),
+            resultDisLevel: document.getElementById('resultDisabilityLevel'),
+            resultDisRatio: document.getElementById('resultDisabilityRatio'),
+            resultDisLevelWrap: document.getElementById('resultDisabilityLevelWrapper'),
+            resultDisRatioWrap: document.getElementById('resultDisabilityRatioWrapper'),
+            totalAmount: document.getElementById('totalAmount'),
+            compensationTable: document.getElementById('compensationTable'),
+            incomeInput: document.getElementById('incomeInput'),
+            expenseInput: document.getElementById('expenseInput')
+        };
+
+        // 页面加载初始化（优化版）
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. 伤残状态切换（优化事件处理）
+            const handleDisabilityChange = function() {
+                const hasDis = this.value === 'has';
+                el.disabilityWrapper.style.display = hasDis ? 'block' : 'none';
+                el.dependentFields.style.display = hasDis ? 'block' : 'none';
+                el.disabilityDevice.style.display = hasDis ? 'block' : 'none';
+                el.resultDisLevelWrap.style.display = hasDis ? 'block' : 'none';
+                el.resultDisRatioWrap.style.display = hasDis ? 'block' : 'none';
+                el.resultDisStatus.textContent = hasDis ? '有伤残' : '无伤残';
+            };
+            
+            el.disabilityRadios.forEach(radio => radio.addEventListener('change', handleDisabilityChange));
+
+            // 2. 护理类型切换（优化）
+            const handleNursingChange = function() {
+                el.professionalFields.style.display = this.value === 'professional' ? 'block' : 'none';
+            };
+            el.nursingRadios.forEach(radio => radio.addEventListener('change', handleNursingChange));
+
+            // 3. 专业护理计算方式切换（优化）
+            const handleProfessionalCalc = function() {
+                const isTotal = this.value === 'total';
+                el.professionalDaily.style.display = isTotal ? 'none' : 'block';
+                el.professionalTotal.style.display = isTotal ? 'block' : 'none';
+            };
+            el.professionalCalc.forEach(radio => radio.addEventListener('change', handleProfessionalCalc));
+
+            // 4. 添加伤残等级（优化）
+            el.addDisability.addEventListener('click', function() {
+                const newItem = document.createElement('div');
+                newItem.className = 'disability-level-item flex gap-2 mb-2';
+                newItem.innerHTML = `
+                    <select class="flex-1 h-11 px-3 border border-gray-300 rounded focus:outline-none focus:form-focus">
+                        <option value="10">十级（10%）</option>
+                        <option value="9">九级（20%）</option>
+                        <option value="8">八级（30%）</option>
+                        <option value="7">七级（40%）</option>
+                        <option value="6">六级（50%）</option>
+                        <option value="5">五级（60%）</option>
+                        <option value="4">四级（70%）</option>
+                        <option value="3">三级（80%）</option>
+                        <option value="2">二级（90%）</option>
+                        <option value="1">一级（100%）</option>
+                    </select>
+                    <button type="button" class="remove-disability-btn text-gray-400 btn-hover hover:text-red-500 p-3">
+                        <i class="fa fa-times"></i>
+                    </button>
+                `;
+                el.disabilityContainer.appendChild(newItem);
+                updateRemoveBtns();
+            });
+
+            // 5. 计算按钮事件
+            el.calculateBtn.addEventListener('click', calculate);
+
+            // 6. 复制功能
+            el.copyFull.addEventListener('click', () => copyResult('full'));
+            el.copySimple.addEventListener('click', () => copyResult('simple'));
+
+            // 初始化
+            updateRemoveBtns();
+            el.disabilityRadios[0].dispatchEvent(new Event('change'));
+        });
+
+        // 更新伤残删除按钮状态（优化版）
+        function updateRemoveBtns() {
+            const btns = document.querySelectorAll('.remove-disability-btn');
+            const disabled = btns.length <= 1;
+            btns.forEach(btn => {
+                btn.disabled = disabled;
+                btn.onclick = function() {
+                    if (!disabled) {
+                        this.closest('.disability-level-item').remove();
+                        updateRemoveBtns();
+                    }
+                };
+            });
+        }
+
+        // 计算赔偿年限（精简逻辑）
+        function getCompYear(age) {
+            if (age < 18) return 20;
+            if (age >= 75) return 5;
+            return 20 - Math.max(0, age - 60);
+        }
+
+        // 计算伤残系数（优化版）
+        function calcDisRatio() {
+            const hasDis = document.querySelector('input[name="disabilityStatus"]:checked').value === 'has';
+            if (!hasDis) return 0;
+            
+            const selects = el.disabilityContainer.querySelectorAll('select');
+            if (selects.length === 0) return 0;
+            
+            // 收集并排序等级
+            const levels = [];
+            for (let i = 0; i < selects.length; i++) {
+                levels.push(parseInt(selects[i].value));
+            }
+            levels.sort((a, b) => a - b);
+            
+            let ratio = DIS_RATIO[levels[0]];
+            for (let i = 1; i < levels.length; i++) {
+                ratio += getAddRatio(levels[i]);
+            }
+            
+            return ratio > 1 ? 1 : ratio;
+        }
+
+        // 检查一级伤残（优化版）
+        function hasFirstLevel() {
+            const selects = el.disabilityContainer.querySelectorAll('select');
+            for (let i = 0; i < selects.length; i++) {
+                if (parseInt(selects[i].value) === 1) return true;
+            }
+            return false;
+        }
+
+        // 核心计算逻辑（精简代码）
+        function calculate() {
+            // 获取输入值（简化默认值处理）
+            const name = document.getElementById('victimName').value || '未填写';
+            const age = parseInt(document.getElementById('victimAge').value) || 0;
+            const medical = parseFloat(document.getElementById('medicalFee').value) || 0;
+            const hospitalDays = parseInt(document.getElementById('hospitalDays').value) || 0;
+            const followUp = parseFloat(document.getElementById('followUpFee').value) || 0;
+            const rehab = parseFloat(document.getElementById('rehabilitationFee').value) || 0;
+            const workLoss = parseInt(document.getElementById('workLossDays').value) || 0;
+            const dailyIncome = parseFloat(document.getElementById('dailyIncome').value) || 0;
+            
+            // 护理费计算
+            const nursingType = document.querySelector('input[name="nursingType"]:checked').value;
+            const familyNursingDays = parseInt(document.getElementById('familyNursingDays').value) || 0;
+            const familyNursingFee = parseFloat(document.getElementById('familyNursingDailyIncome').value) || 0;
+            const proCalcType = document.querySelector('input[name="professionalCalcType"]:checked')?.value || 'daily';
+            const proDays = parseInt(document.getElementById('professionalNursingDays').value) || 0;
+            const proDaily = parseFloat(document.getElementById('professionalNursingDailyIncome').value) || 0;
+            const proTotal = parseFloat(document.getElementById('professionalNursingTotal').value) || 0;
+            
+            const nutritionDays = parseInt(document.getElementById('nutritionDays').value) || 0;
+            const nutritionStd = parseFloat(document.getElementById('nutritionStandard').value) || 0;
+            const traffic = parseFloat(document.getElementById('trafficFee').value) || 0;
+            const accommodation = parseFloat(document.getElementById('accommodationFee').value) || 0;
+            
+            // 伤残相关
+            const hasDis = document.querySelector('input[name="disabilityStatus"]:checked').value === 'has';
+            const depCount = hasDis ? (parseInt(document.getElementById('dependentCount').value) || 0) : 0;
+            const depYears = hasDis ? (parseFloat(document.getElementById('dependentYears').value) || 0) : 0;
+            const supportCount = hasDis ? (parseInt(document.getElementById('supportorCount').value) || 1) : 1;
+            const disDevice = hasDis ? (parseFloat(document.getElementById('disabilityDeviceFee').value) || 0) : 0;
+            
+            // 核心参数
+            const disRatio = calcDisRatio();
+            const compYear = getCompYear(age);
+            const hasFirst = hasDis && hasFirstLevel();
+            
+            // 获取用户输入的收入和支出
+            const income = parseFloat(el.incomeInput.value) || 44649;
+            const expense = parseFloat(el.expenseInput.value) || 27339;
+            
+            // 伤残等级文本（优化版）
+            let disLevelText = '无伤残';
+            if (hasDis) {
+                const selects = el.disabilityContainer.querySelectorAll('select');
+                const texts = [];
+                for (let i = 0; i < selects.length; i++) {
+                    texts.push(selects[i].options[selects[i].selectedIndex].text);
+                }
+                disLevelText = texts.join('、');
+            }
+            
+            // 护理费计算（精简逻辑）
+            let nursingFee = 0;
+            let nursingBasis = '';
+            let nursingCalc = '';
+            
+            if (nursingType === 'family') {
+                nursingFee = familyNursingDays * familyNursingFee;
+                nursingBasis = '家庭成员护理日费用 × 护理期';
+                nursingCalc = `${familyNursingFee.toFixed(2)} × ${familyNursingDays}`;
+            } else {
+                const familyFee = familyNursingDays * familyNursingFee;
+                const proFee = proCalcType === 'total' ? proTotal : proDays * proDaily;
+                
+                nursingFee = familyFee + proFee;
+                nursingBasis = proCalcType === 'total' ? '家庭成员护理费 + 专业护理总费用' : '家庭成员护理费 + 专业护理日费用 × 天数';
+                nursingCalc = proCalcType === 'total' 
+                    ? `(${familyNursingFee.toFixed(2)} × ${familyNursingDays}) + ${proTotal.toFixed(2)}`
+                    : `(${familyNursingFee.toFixed(2)} × ${familyNursingDays}) + (${proDaily.toFixed(2)} × ${proDays})`;
+            }
+            
+            // 赔偿项目（精简数组）
+            const items = [
+                { name: '医疗费', basis: '实际支出金额', calc: `${medical.toFixed(2)}`, amount: medical },
+                { name: '住院伙食补助费', basis: `山西标准：${BASE.hospitalFood}元/天 × 住院天数`, calc: `${BASE.hospitalFood} × ${hospitalDays}`, amount: BASE.hospitalFood * hospitalDays },
+                { name: '后续治疗费', basis: '预估金额', calc: `${followUp.toFixed(2)}`, amount: followUp },
+                { name: '康复费', basis: '实际支出金额', calc: `${rehab.toFixed(2)}`, amount: rehab },
+                { name: '误工费', basis: '日收入 × 误工期', calc: `${dailyIncome.toFixed(2)} × ${workLoss}`, amount: dailyIncome * workLoss },
+                { name: '护理费', basis: nursingBasis, calc: nursingCalc, amount: nursingFee },
+                { name: '营养费', basis: '营养费标准 × 营养期', calc: `${nutritionStd.toFixed(2)} × ${nutritionDays}`, amount: nutritionStd * nutritionDays },
+                { name: '交通费', basis: '实际支出金额', calc: `${traffic.toFixed(2)}`, amount: traffic },
+                { name: '住宿费', basis: '实际支出金额', calc: `${accommodation.toFixed(2)}`, amount: accommodation }
+            ];
+            
+            // 伤残相关项目
+            if (hasDis) {
+                // 计算最低伤残等级用于精神损害抚慰金
+                const selects = el.disabilityContainer.querySelectorAll('select');
+                let minLevel = 10;
+                for (let i = 0; i < selects.length; i++) {
+                    const level = parseInt(selects[i].value);
+                    if (level < minLevel) minLevel = level;
+                }
+                
+                if (hasFirst) {
+                    items.push({
+                        name: '丧葬费',
+                        basis: `2024年山西参考标准：${BASE.funeral}元`,
+                        calc: `${BASE.funeral.toFixed(2)}`,
+                        amount: BASE.funeral
+                    });
+                }
+                
+                items.push(
+                    {
+                        name: '残疾赔偿金',
+                        basis: `人均可支配收入 × 赔偿年限 × 伤残系数`,
+                        calc: `${income} × ${compYear} × ${disRatio.toFixed(2)}`,
+                        amount: income * compYear * disRatio
+                    },
+                    {
+                        name: '残疾辅助器具费',
+                        basis: '实际支出金额',
+                        calc: `${disDevice.toFixed(2)}`,
+                        amount: disDevice
+                    },
+                    {
+                        name: '被扶养人生活费',
+                        basis: `人均消费支出 × 扶养年限 × 伤残系数 ÷ 扶养人人数`,
+                        calc: `${expense} × ${depYears} × ${depCount} × ${disRatio.toFixed(2)} ÷ ${supportCount}`,
+                        amount: expense * depYears * depCount * disRatio / supportCount
+                    },
+                    {
+                        name: '精神损害抚慰金',
+                        basis: `十级基础${BASE.mentalBase}元，每级递增${BASE.mentalBase}元`,
+                        calc: `${BASE.mentalBase} × ${11 - minLevel}`,
+                        amount: BASE.mentalBase * (11 - minLevel)
+                    }
+                );
+            }
+            
+            // 计算总额（优化版）
+            let total = 0;
+            for (let i = 0; i < items.length; i++) {
+                total += items[i].amount;
+            }
+            
+            // 更新结果（简化DOM操作）
+            el.resultName.textContent = name;
+            if (hasDis) {
+                el.resultDisLevel.textContent = disLevelText;
+                el.resultDisRatio.textContent = `${(disRatio * 100).toFixed(0)}%`;
+            }
+            el.totalAmount.textContent = `¥ ${total.toFixed(2)}`;
+            
+            // 更新表格（优化版）
+            let tableHTML = '';
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                tableHTML += `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-3 py-2 text-sm border-b">${item.name}${item.name === '丧葬费' ? ' <span class="text-red-500 text-xs">(一级伤残专属)</span>' : ''}</td>
+                    <td class="px-3 py-2 text-sm border-b text-gray-600">${item.basis}</td>
+                    <td class="px-3 py-2 text-sm border-b text-gray-600">${item.calc}</td>
+                    <td class="px-3 py-2 text-sm font-medium text-right border-b ${item.amount > 0 ? 'text-primary' : 'text-gray-500'}">${item.amount.toFixed(2)}</td>
+                </tr>`;
+            }
+            el.compensationTable.innerHTML = tableHTML;
+            
+            // 滚动到结果（兼容旧浏览器）
+            document.querySelector('.bg-white.rounded-lg.p-4.shadow-md:last-child').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+
+        // 复制结果（优化简单版本，保留完整项目）
+        function copyResult(type) {
+            const name = el.resultName.textContent;
+            const disStatus = el.resultDisStatus.textContent;
+            const disLevel = el.resultDisLevel.textContent;
+            const disRatio = el.resultDisRatio.textContent;
+            const total = el.totalAmount.textContent;
+            const income = parseFloat(el.incomeInput.value) || 44649;
+            const expense = parseFloat(el.expenseInput.value) || 27339;
+            
+            // 获取赔偿项目数据（优化版）
+            const compensationItems = [];
+            const rows = el.compensationTable.querySelectorAll('tr');
+            for (let i = 0; i < rows.length; i++) {
+                const tr = rows[i];
+                const firstTd = tr.querySelector('td');
+                if (firstTd && firstTd.textContent !== '请填写信息并点击「计算赔偿金额」') {
+                    const tds = tr.querySelectorAll('td');
+                    // 简化空白字符处理
+                    const cleanText = (text) => text ? text.trim().replace(/\s+/g, ' ') : '';
+                    compensationItems.push({
+                        name: cleanText(tds[0]?.textContent).replace('(一级伤残专属)', ''),
+                        basis: cleanText(tds[1]?.textContent),
+                        calc: cleanText(tds[2]?.textContent),
+                        amount: cleanText(tds[3]?.textContent)
+                    });
+                }
+            }
+            
+            let text = '';
+            
+            if (type === 'full') {
+                // 完整版本：保留所有细节和参考标准（优化版）
+                let details = '';
+                for (let i = 0; i < compensationItems.length; i++) {
+                    const item = compensationItems[i];
+                    details += `• ${item.name}
+  计算依据：${item.basis}
+  计算过程：${item.calc}
+  结果：${item.amount}`;
+                    if (i < compensationItems.length - 1) details += '\n\n';
+                }
+                
+                text = `山西人身损害赔偿计算结果
+====================================
+受害人：${name}
+伤残情况：${disStatus}
+${disStatus === '有伤残' ? `伤残等级：${disLevel}
+综合伤残系数：${disRatio}` : ''}
+总赔偿金额：${total}
+
+赔偿明细：
+${details}
+
+参考标准（2024年山西）：
+- 城镇居民人均可支配收入：${income}元/年
+- 城镇居民人均消费支出：${expense}元/年
+- 住院伙食补助费：100元/天 | 护工参考：120元/天
+- 精神损害抚慰金：十级5000元，每级递增5000元
+- 丧葬费：49959.5元（一级伤残专属）
+
+计算规范：GA/T1193—2014 | 晋高法〔2020〕34号
+注：本结果仅为参考，最终金额以司法判决/调解为准`;
+            } else {
+                // 简洁版本：保留核心信息，去除冗余说明，格式紧凑（优化版）
+                let details = '';
+                for (let i = 0; i < compensationItems.length; i++) {
+                    const item = compensationItems[i];
+                    details += `【${item.name}】${item.calc} = ${item.amount}`;
+                    if (i < compensationItems.length - 1) details += '\n';
+                }
+                
+                text = `山西人身损害赔偿计算结果
+受害人：${name}
+伤残情况：${disStatus}
+${disStatus === '有伤残' ? `伤残等级：${disLevel} | 综合系数：${disRatio}` : ''}
+
+赔偿项目明细：
+${details}
+
+合计赔偿金额：${total}
+
+注：基于2024年山西赔偿标准计算，仅供参考`;
+            }
+            
+            // 兼容旧浏览器的复制方法
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => showToast(type === 'full' ? '完整结果已复制' : '简洁结果已复制'));
+            } else {
+                // 降级处理：创建临时textarea
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast(type === 'full' ? '完整结果已复制' : '简洁结果已复制');
+            }
+        }
+
+        // 简化Toast提示（兼容旧浏览器）
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+                background: rgba(0,0,0,0.8); color: white; padding: 8px 16px;
+                border-radius: 4px; font-size: 14px; z-index: 9999;
+            `;
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

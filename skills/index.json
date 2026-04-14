@@ -1,7 +1,13 @@
 {
   "name": "律师办案智能助手",
   "description": "专为律师设计的办案全流程智能助手，整合案件管理、证据分析、法律文书、法律检索、庭审策略、内容创作、判决预测等专业能力",
-  "version": "1.4.0",
+  "version": "1.5.0",
+  "regionConfig": {
+    "enabled": true,
+    "defaultRegion": "140000",
+    "configPath": "../config/region-config.json",
+    "description": "全局地域配置，支持用户选择所在省市，自动适配当地法律规则"
+  },
   "skills": {
     "workflow": {
       "description": "通用办案能力，覆盖律师日常工作的全流程",
@@ -21,8 +27,8 @@
         {
           "name": "法律文书专家",
           "path": "workflow/document-writer/SKILL.md",
-          "keywords": ["起诉状", "答辩状", "代理词", "文书", "法律文书", "上诉状"],
-          "description": "起诉状、答辩状、代理词、上诉状等法律文书生成"
+          "keywords": ["起诉状", "答辩状", "代理词", "文书", "法律文书", "上诉状", "委托意见书", "案件分析意见书", "律师费报价", "当事人说服", "风险评估报告"],
+          "description": "支持20+种法律文书生成，特别优化【案件委托意见书】撰写能力，包含案件分析、可行性评估、律师费报价、委托说服等完整内容，提升当事人委托转化率"
         },
         {
           "name": "法律检索与案例分析",
@@ -65,6 +71,12 @@
           "path": "workflow/multi-search-engine/SKILL.md",
           "keywords": ["搜索", "多引擎", "百度", "Google", "Bing", "法律检索", "网页抓取"],
           "description": "集成17个国内外搜索引擎，支持高级搜索语法、时间筛选、隐私搜索"
+        },
+        {
+          "name": "PDF工具集",
+          "path": "workflow/pdf-tools/SKILL.md",
+          "keywords": ["PDF", "合并", "拆分", "转换", "OCR", "文字识别", "去水印", "加密", "格式转换"],
+          "description": "PDF文件合并、拆分、格式转换、OCR文字识别、加密解密、水印添加等常用办公工具"
         }
       ]
     },
@@ -106,6 +118,114 @@
           "path": "professional/criminal-compliance/SKILL.md",
           "keywords": ["刑事合规", "企业合规", "合规不起诉", "刑事风险", "企业犯罪预防", "合规整改"],
           "description": "企业刑事风险防范、刑事合规整改、合规不起诉"
+        },
+        {
+          "name": "伤残等级评估专家",
+          "path": "professional/disability-assessment/SKILL.md",
+          "keywords": ["伤残鉴定", "残疾等级", "人身损害", "伤残预估", "人体损伤致残程度分级", "伤残赔偿"],
+          "description": "人体损伤致残程度分级判断与预估，支持交通事故、人身损害等场景的伤残等级评定，提供鉴定指导与索赔建议"
+        },
+        {
+          "name": "工伤赔偿专项助手",
+          "path": "professional/work-injury/SKILL.md",
+          "keywords": ["工伤", "工伤保险", "工伤认定", "劳动能力鉴定", "停工留薪期", "工伤赔偿"],
+          "description": "工伤认定、劳动能力鉴定、工伤待遇计算、赔偿谈判全流程指导，适用山西省工伤保险条例标准"
+        },
+        {
+          "name": "婚姻家事专项助手",
+          "path": "professional/marriage-family/SKILL.md",
+          "keywords": ["离婚", "财产分割", "抚养权", "抚养费", "继承", "遗嘱", "赡养", "婚姻家庭"],
+          "description": "离婚、财产分割、子女抚养、继承、赡养等婚姻家庭纠纷全流程指导"
+        },
+        {
+          "name": "民间借贷专项助手",
+          "path": "professional/loan-dispute/SKILL.md",
+          "keywords": ["民间借贷", "借款", "利息", "借条", "欠条", "诉讼时效", "高利贷", "套路贷"],
+          "description": "民间借贷纠纷证据审查、利息计算、诉讼指导、文书生成，适用最新民间借贷司法解释"
+        },
+        {
+          "name": "执行程序专项助手",
+          "path": "professional/enforcement/SKILL.md",
+          "keywords": ["强制执行", "执行异议", "终本", "财产保全", "失信被执行人", "限高", "执行和解"],
+          "description": "强制执行、财产查控、执行异议、执行异议之诉、终本应对全流程指导"
+        },
+        {
+          "name": "律师收费计算器",
+          "path": "professional/lawyer-fee-calculator/SKILL.md",
+          "keywords": ["律师费", "律师收费", "代理费", "收费标准", "律师服务费"],
+          "description": "按照山西省律师服务收费指导标准计算律师费，支持民事、刑事、行政等各类案件"
+        },
+        {
+          "name": "帮信罪辩护专项助手",
+          "path": "professional/help-information-network-crime/SKILL.md",
+          "keywords": ["帮信罪", "帮助信息网络犯罪活动罪", "银行卡跑分", "支付结算", "刑事辩护"],
+          "description": "帮助信息网络犯罪活动罪案件办理全流程指导、证据审查、量刑计算、辩护策略制定"
+        },
+        {
+          "name": "故意伤害罪辩护专项助手",
+          "path": "professional/intentional-injury/SKILL.md",
+          "keywords": ["故意伤害罪", "伤情鉴定", "轻伤", "重伤", "刑事和解", "刑事辩护"],
+          "description": "故意伤害案件办理全流程指导、伤情鉴定审查、量刑计算、赔偿和解、辩护策略制定"
+        },
+        {
+          "name": "交通肇事罪辩护专项助手",
+          "path": "professional/traffic-accident-crime/SKILL.md",
+          "keywords": ["交通肇事罪", "交通事故", "责任认定", "肇事逃逸", "保险理赔", "刑事辩护"],
+          "description": "交通肇事案件办理全流程指导、责任认定审查、逃逸情节辩护、保险理赔指导、量刑辩护"
+        },
+        {
+          "name": "非法经营罪辩护专项助手",
+          "path": "professional/illegal-business-operation/SKILL.md",
+          "keywords": ["非法经营罪", "无证经营", "烟草专卖", "外汇", "POS机套现", "刑事辩护"],
+          "description": "非法经营案件办理全流程指导、情节认定、罚金辩护、无罪辩护、量刑辩护"
+        },
+        {
+          "name": "寻衅滋事罪辩护专项助手",
+          "path": "professional/affray/SKILL.md",
+          "keywords": ["寻衅滋事罪", "打架斗殴", "轻微伤", "被害人过错", "缓刑", "刑事辩护"],
+          "description": "寻衅滋事案件办理全流程指导、情节认定、轻微伤辩护、被害人过错辩护、缓刑争取"
+        },
+        {
+          "name": "开设赌场罪辩护专项助手",
+          "path": "professional/gambling-house-operation/SKILL.md",
+          "keywords": ["开设赌场罪", "网络赌博", "赌资认定", "共犯区分", "量刑辩护", "刑事辩护"],
+          "description": "开设赌场案件办理全流程指导、赌资认定、共犯区分、量刑辩护、缓刑争取"
+        },
+        {
+          "name": "职务侵占罪辩护专项助手",
+          "path": "professional/job-occupation-embezzlement/SKILL.md",
+          "keywords": ["职务侵占罪", "公司员工", "挪用资金", "侵占单位财产", "刑事辩护"],
+          "description": "职务侵占案件办理全流程指导、主体资格认定、数额辩护、与挪用资金的区分辩护"
+        },
+        {
+          "name": "挪用资金罪辩护专项助手",
+          "path": "professional/fund-misappropriation/SKILL.md",
+          "keywords": ["挪用资金罪", "职务便利", "单位资金", "挪用借贷", "量刑辩护", "刑事辩护"],
+          "description": "挪用资金案件办理全流程指导、用途认定、退还情节辩护、缓刑争取"
+        },
+        {
+          "name": "劳动争议专项助手",
+          "path": "professional/labor-dispute/SKILL.md",
+          "keywords": ["劳动争议", "工伤", "劳动合同", "经济补偿", "劳动仲裁", "社会保险"],
+          "description": "劳动纠纷全流程指导、劳动关系认定、工伤赔偿、经济补偿计算、仲裁诉讼策略制定"
+        },
+        {
+          "name": "建设工程纠纷专项助手",
+          "path": "professional/construction-project-dispute/SKILL.md",
+          "keywords": ["建设工程纠纷", "工程款", "工期索赔", "工程质量", "优先受偿权"],
+          "description": "建设工程案件全流程指导、工程款计算、工期索赔、质量纠纷处理、优先受偿权主张"
+        },
+        {
+          "name": "房产纠纷专项助手",
+          "path": "professional/real-estate-dispute/SKILL.md",
+          "keywords": ["房产纠纷", "房屋买卖", "二手房", "房屋租赁", "拆迁安置", "离婚房产分割"],
+          "description": "房屋买卖、租赁、继承、离婚分割、拆迁等房产案件处理全流程指导"
+        },
+        {
+          "name": "知识产权纠纷专项助手",
+          "path": "professional/intellectual-property-dispute/SKILL.md",
+          "keywords": ["知识产权纠纷", "著作权", "商标权", "专利权", "不正当竞争", "侵权赔偿"],
+          "description": "著作权、商标权、专利权、不正当竞争等知识产权案件处理全流程指导"
         }
       ]
     },
@@ -117,6 +237,24 @@
           "path": "intelligence/judgment-prediction/SKILL.md",
           "keywords": ["判决预测", "裁判预测", "案例预测", "风险提示", "司法预测", "规则萃取"],
           "description": "基于司法案例萃取裁判规则，对新案件进行判决预测，分析风险因素"
+        },
+        {
+          "name": "裁判文书自动摘要",
+          "path": "intelligence/judgment-abstract/SKILL.md",
+          "keywords": ["裁判文书摘要", "判决书摘要", "核心信息提取", "文书结构化", "信息提取"],
+          "description": "自动提取裁判文书核心信息，生成极简版/标准版/完整版结构化摘要"
+        },
+        {
+          "name": "争议焦点自动提取",
+          "path": "intelligence/dispute-focus-extraction/SKILL.md",
+          "keywords": ["争议焦点", "焦点归纳", "案件核心", "庭审焦点", "争议提取"],
+          "description": "从各类案件材料中自动提取、分类归纳争议焦点，列明双方立场和法律依据"
+        },
+        {
+          "name": "类案精准推送",
+          "path": "intelligence/similar-case-push/SKILL.md",
+          "keywords": ["类案检索", "类案推送", "相似案例", "判例检索", "裁判规则"],
+          "description": "基于案件事实和争议焦点精准匹配推送相似判例，提供裁判规则、尺度统计"
         }
       ]
     }
@@ -124,5 +262,94 @@
   "knowledgeBase": {
     "path": "../knowledge-base",
     "description": "法律知识库，包含法律法规、典型案例、司法解释、文书模板、计算标准"
+  },
+  "extensions": {
+    "description": "通用扩展技能，提升工作效率和开发能力",
+    "items": [
+      {
+        "name": "头脑风暴与需求探索",
+        "path": "~/.openclaw/skills/brainstorming/SKILL.md",
+        "keywords": ["头脑风暴", "需求分析", "方案设计", "创意", "brainstorming"],
+        "description": "创意工作前需求探索与方案设计，帮助梳理问题、发散思维、制定最优解决方案"
+      },
+      {
+        "name": "并行子代理调度",
+        "path": "~/.openclaw/skills/dispatching-parallel-agents/SKILL.md",
+        "keywords": ["并行", "多代理", "任务调度", "同时处理", "dispatching-parallel-agents"],
+        "description": "调度多个子代理同时处理独立任务，提升工作效率，适合多任务并行处理场景"
+      },
+      {
+        "name": "计划执行助手",
+        "path": "~/.openclaw/skills/executing-plans/SKILL.md",
+        "keywords": ["计划执行", "分步执行", "任务跟进", "executing-plans"],
+        "description": "按制定好的计划分步执行任务，自动跟踪进度，处理执行中的问题"
+      },
+      {
+        "name": "开发分支完成助手",
+        "path": "~/.openclaw/skills/finishing-a-development-branch/SKILL.md",
+        "keywords": ["分支完成", "合并", "PR", "代码清理", "finishing-a-development-branch"],
+        "description": "开发分支功能完成后的合并、PR创建、代码清理等收尾工作指导"
+      },
+      {
+        "name": "代码审查处理助手",
+        "path": "~/.openclaw/skills/receiving-code-review/SKILL.md",
+        "keywords": ["代码审查", "CR处理", "反馈优化", "receiving-code-review"],
+        "description": "处理代码审查反馈，帮助理解审查意见、修改代码、回复审查"
+      },
+      {
+        "name": "代码审查请求助手",
+        "path": "~/.openclaw/skills/requesting-code-review/SKILL.md",
+        "keywords": ["代码审查请求", "发起CR", "PR描述", "requesting-code-review"],
+        "description": "帮助准备代码审查请求，编写清晰的PR描述，整理变更内容"
+      },
+      {
+        "name": "子代理驱动开发",
+        "path": "~/.openclaw/skills/subagent-driven-development/SKILL.md",
+        "keywords": ["子代理", "并行开发", "任务拆分", "subagent-driven-development"],
+        "description": "将复杂开发任务拆分为多个子任务，分配给子代理并行处理，提升开发效率"
+      },
+      {
+        "name": "系统化调试助手",
+        "path": "~/.openclaw/skills/systematic-debugging/SKILL.md",
+        "keywords": ["调试", "问题排查", "bug修复", "systematic-debugging"],
+        "description": "系统化的问题排查与调试流程，帮助快速定位和解决bug"
+      },
+      {
+        "name": "测试驱动开发助手",
+        "path": "~/.openclaw/skills/test-driven-development/SKILL.md",
+        "keywords": ["TDD", "测试驱动开发", "单元测试", "test-driven-development"],
+        "description": "遵循测试驱动开发流程，先写测试再写代码，保证代码质量"
+      },
+      {
+        "name": "Git工作树助手",
+        "path": "~/.openclaw/skills/using-git-worktrees/SKILL.md",
+        "keywords": ["git", "worktree", "工作树", "多分支并行", "using-git-worktrees"],
+        "description": "创建和管理隔离的Git工作树环境，支持多分支并行开发，互不影响"
+      },
+      {
+        "name": "技能使用引导",
+        "path": "~/.openclaw/skills/using-superpowers/SKILL.md",
+        "keywords": ["技能引导", "使用帮助", "功能查询", "using-superpowers"],
+        "description": "帮助查找和使用各类技能，提供功能说明和使用指导"
+      },
+      {
+        "name": "完成前验证助手",
+        "path": "~/.openclaw/skills/verification-before-completion/SKILL.md",
+        "keywords": ["验证", "质量检查", "测试", "交付前检查", "verification-before-completion"],
+        "description": "工作完成前的质量验证流程，包括测试、检查、确认，保证交付质量"
+      },
+      {
+        "name": "开发计划编写助手",
+        "path": "~/.openclaw/skills/writing-plans/SKILL.md",
+        "keywords": ["计划编写", "方案设计", "任务拆分", "writing-plans"],
+        "description": "帮助制定多步骤任务的实现方案和执行计划，拆分任务、评估时间、规划流程"
+      },
+      {
+        "name": "自定义技能开发助手",
+        "path": "~/.openclaw/skills/writing-skills/SKILL.md",
+        "keywords": ["技能开发", "自定义技能", "技能编写", "writing-skills"],
+        "description": "帮助创建和编辑自定义技能，生成技能模板，指导技能开发规范"
+      }
+    ]
   }
 }
